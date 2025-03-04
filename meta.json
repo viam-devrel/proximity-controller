@@ -8,7 +8,7 @@
     {
       "api": "rdk:service:generic",
       "model": "atacke:proximity-alert:hc-sr04_rgb-led",
-      "short_description": "Use an ultrasonic sensor (HC-SR04) to detect distance and display a visual indicator with an RGB LED.",
+      "short_description": "Detect distance with an HC-SR04 ultrasonic sensor and send visual indicator via RGB LED.",
       "markdown_link": "README.md#model-atackeproximity-alerthc-sr04_rgb-led"
     }
   ],
