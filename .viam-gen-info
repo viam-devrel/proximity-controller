@@ -1,0 +1,12 @@
+{
+  "module_name": "proximity-alert",
+  "namespace": "atacke",
+  "language": "python",
+  "resource_type": "service",
+  "resource_subtype": "generic",
+  "model_name": "hc-sr04_rgb-led",
+  "enable_cloud_build": true,
+  "initialize_git": false,
+  "generator_version": "0.1.0",
+  "generated_on": "2025-02-20T21:27:45.919959Z"
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://dl.viam.dev/module.schema.json",
+  "module_id": "atacke:proximity-alert",
+  "visibility": "public",
+  "url": "https://github.com/viam-devrel/proximity-controller",
+  "description": "Modular generic service: hc-sr04_rgb-led",
+  "models": [
+    {
+      "api": "rdk:service:generic",
+      "model": "atacke:proximity-alert:hc-sr04_rgb-led",
+      "short_description": "Use an ultrasonic sensor (HC-SR04) to detect distance and display a visual indicator with an RGB LED.",
+      "markdown_link": "README.md#model-atackeproximity-alerthc-sr04_rgb-led"
+    }
+  ],
+  "entrypoint": "dist/main",
+  "first_run": "",
+  "build": {
+    "build": "./build.sh",
+    "setup": "./setup.sh",
+    "path": "dist/archive.tar.gz",
+    "arch": [
+      "linux/amd64",
+      "linux/arm64"
+    ]
+  }
+}
