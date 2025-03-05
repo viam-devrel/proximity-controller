@@ -58,8 +58,6 @@ class HcSr04RgbLed(Generic, EasyResource):
         required_attributes = ["red_pin", "green_pin", "blue_pin"]
         implicit_dependencies = []
         
-        LOGGER.info("Validating config...")
-        
         for component in required_dependencies:
             if component not in attrs or not isinstance(attrs[component], str):
                 raise ValueError(f"{component} is required in the configuration and must be a string")
@@ -84,7 +82,7 @@ class HcSr04RgbLed(Generic, EasyResource):
         attrs = struct_to_dict(config.attributes)
         self.auto_start = bool(attrs.get("auto_start", self.auto_start))
         
-        LOGGER.info("Reconfiguring AT...")
+        LOGGER.debug("Reconfiguring proximity alert...")
 
         # set board (raspberry pi)
         board_resource = dependencies.get(
@@ -95,7 +93,7 @@ class HcSr04RgbLed(Generic, EasyResource):
         if not isinstance(self.board, Board):
             raise Exception(f"Board '{board_resource}' not found during reconfiguration.")
         
-        LOGGER.info(f"BOARD IS SET, {self.board}")
+        LOGGER.debug(f"BOARD IS SET, {self.board}")
         
         # set ultrasonic sensor
         sensor_resource = dependencies.get(
@@ -106,7 +104,7 @@ class HcSr04RgbLed(Generic, EasyResource):
         if not isinstance(self.sensor, Sensor):
             raise Exception(f"Sensor '{sensor_resource}' not found during reconfiguration.")
         
-        LOGGER.info(f"SENSOR IS SET, {self.sensor}")
+        LOGGER.debug(f"SENSOR IS SET, {self.sensor}")
 
         # set RGB LED pins
         self.red_pin_attr = str(attrs.get("red_pin", "33"))
@@ -115,7 +113,7 @@ class HcSr04RgbLed(Generic, EasyResource):
 
         # set safe distance
         self.safe_distance = float(attrs.get("safe_distance", "0.2"))
-        LOGGER.info(f"SAFE DISTANCE SET, {self.safe_distance}")
+        LOGGER.debug(f"SAFE DISTANCE SET, {self.safe_distance}")
 
         if self.auto_start:
             self.start()
@@ -123,14 +121,14 @@ class HcSr04RgbLed(Generic, EasyResource):
         return super().reconfigure(config, dependencies)
  
     async def signal_safe(self):
-        LOGGER.info("Setting RGB to safe color...")
+        LOGGER.debug("Setting RGB to safe color...")
 
         await self.red_pin.set(high=False)
         await self.green_pin.set(high=True)
         await self.blue_pin.set(high=False)
 
     async def signal_unsafe(self):
-        LOGGER.info("Setting RGB to unsafe color...")
+        LOGGER.debug("Setting RGB to unsafe color...")
 
         await self.red_pin.set(high=True)
         await self.green_pin.set(high=False)
@@ -165,11 +163,11 @@ class HcSr04RgbLed(Generic, EasyResource):
                 distance = (await self.sensor.get_readings())["distance"]
                 
                 if distance < self.safe_distance and is_safeColor:
-                    LOGGER.info("DISTANCE IS UNSAFE, SETTING TO UNSAFE COLOR")    
+                    LOGGER.debug(f"DISTANCE IS UNSAFE: {distance}, SETTING TO UNSAFE COLOR")    
                     await self.signal_unsafe()
                     is_safeColor = False
                 elif distance >= self.safe_distance and not is_safeColor:
-                    LOGGER.info("DISTANCE IS SAFE, SETTING TO SAFE COLOR")
+                    LOGGER.debug(f"DISTANCE IS SAFE: {distance}, SETTING TO SAFE COLOR")
                     await self.signal_safe()
                     is_safeColor = True
             except Exception as e:
@@ -188,7 +186,6 @@ class HcSr04RgbLed(Generic, EasyResource):
             self.task.cancel()
 
     async def control_loop(self):
-        LOGGER.info(f"self.event.is_set()T? {self.event.is_set()}")
         while not self.event.is_set():
             await self.on_loop()
             await asyncio.sleep(0)
